@@ -1,0 +1,18 @@
+version: '3.8'
+services:
+  postgres:
+    image: postgres
+    environment: 
+      POSTGRES_HOST_AUTH_METHOD: "trust"
+      POSTGRES_DB: "mini-exec_production"
+  lucky:
+    image: lucky/mini-exec
+    ports: 
+      - 5000:5000
+    environment:
+      DATABASE_URL: postgres://postgres:@postgres:5432/mini-exec_production
+      SECRET_KEY_BASE: lucky_framework_32_character_key
+      SEND_GRID_KEY: ''
+      APP_DOMAIN: localhost
+      LUCKY_ENV: production
+      PORT: 5000
