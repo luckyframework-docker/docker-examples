@@ -1,0 +1,41 @@
+#!/bin/sh
+# Exit if any subcommand fails
+set -e
+
+# Seed DB?
+SEED_DB="false"
+while getopts 's' flag; do
+  case "${flag}" in
+    s) SEED_DB="true" ;;
+    *) ;;
+  esac
+done
+
+indent() {
+  while read -r LINE; do
+    echo "  $LINE" || true
+  done
+}
+
+printf "\n▸ Pre-compile tasks runner to save time\n"
+crystal build /home/lucky/app/tasks.cr -o tasks/run_task
+
+printf "\n▸ Migrating once postgres is up\n"
+/home/lucky/app/script/docker/wait_for_postgres
+
+DB_NAME="${LUCKY_ENV:-development}"
+
+printf "\n▸ Creating %s database.\n" "$DB_NAME"
+/home/lucky/app/tasks/run_task db.create | indent
+
+printf "\n▸ Migrating database.\n"
+/home/lucky/app/tasks/run_task db.migrate | indent
+
+if [ "$SEED_DB" = "true" ]; then
+  printf "\n▸ Seeding database with required seeds\n"
+  /home/lucky/app/tasks/run_task db.create_required_seeds | indent
+  if [ "$LUCKY_ENV" != "production" ]; then
+    printf "\n▸ Seeding the database with sample seeds\n"
+    lucky db.create_sample_seeds | indent
+  fi
+fi

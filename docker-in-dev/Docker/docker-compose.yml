@@ -1,0 +1,16 @@
+version: '3.8'
+services:
+  postgres:
+    image: postgres
+    networks:
+    - internal
+  PROJECT_NAME:
+    networks:
+    - internal
+    - external
+    depends_on:
+    - postgres
+
+networks:
+  external:
+  internal:

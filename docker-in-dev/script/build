@@ -1,0 +1,8 @@
+#!/bin/sh
+
+docker-compose -f Docker/docker-compose.yml -f Docker/docker-compose.dev.yml build
+
+# Copy `shard.lock` from the container to include it in the repo.
+id=$(docker create PROJECT_NAME:dev)
+docker cp $id:/home/lucky/app/shard.lock .
+docker rm -v $id

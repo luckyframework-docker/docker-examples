@@ -1,0 +1,31 @@
+version: '3.8'
+services:
+  postgres:
+    restart: always
+    volumes:
+    - db-data:/var/lib/postgresql/data
+    container_name: PROJECT_NAME_postgres
+    environment: 
+      POSTGRES_HOST_AUTH_METHOD: "trust"
+  PROJECT_NAME:
+    build:
+      context: ../
+      dockerfile: Docker/Dockerfile
+    image: PROJECT_NAME:dev
+    volumes:
+    - ../:/home/lucky/app
+    # ignores the following in the volume
+    - /home/lucky/app/bin/
+    - /home/lucky/app/lib/
+    - /home/lucky/app/.shards/
+    - /home/lucky/app/node_modules/
+    ports:
+    - 5000:5000
+    environment:
+      DATABASE_URL: postgres://postgres:@postgres:5432/PROJECT_NAME_development
+      SHARDS_CACHE_PATH: /home/lucky/app/.shards
+    tty: true
+    container_name: PROJECT_NAME
+volumes:
+  db-data:
+    name: PROJECT_NAME_data
