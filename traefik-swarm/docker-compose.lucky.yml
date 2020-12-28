@@ -1,0 +1,29 @@
+version: '3.8'
+services:
+  lucky:
+    image: ${LUCKY_IMAGE}:${LUCKY_TAG}
+    environment:
+      DB_URL:
+      SECRET_KEY_BASE:
+      SEND_GRID_KEY:
+      APP_DOMAIN:
+      LUCKY_ENV: production
+      PORT: 5000
+    networks:
+      - internal
+    deploy:
+      labels:
+        - traefik.enable=true
+        - traefik.http.services.lucky-service.loadbalancer.server.port=5000
+        - traefik.http.routers.lucky.rule=Host(`${APP_DOMAIN}`)
+        - traefik.http.routers.lucky.entrypoints=websecure
+        - traefik.http.routers.lucky.tls=true
+        - traefik.docker.lbswarm=true
+        - traefik.http.routers.lucky.tls.certresolver=letsEncrypt
+      replicas: 2
+      restart_policy:
+        condition: on-failure
+      update_config:
+        failure_action: rollback
+    healthcheck:
+      test: ["CMD", "/home/lucky/app/run_task", "healthcheck"]

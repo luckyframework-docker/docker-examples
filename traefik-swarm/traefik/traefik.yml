@@ -1,0 +1,37 @@
+entryPoints:
+  web:
+    address: :80
+    http:
+      redirections:
+        entryPoint:
+          to: websecure
+          scheme: https
+  websecure:
+    address: :443
+providers:
+  file:
+    directory: /etc/traefik/config
+    watch: true
+  docker:
+    endpoint: 'tcp://traefik-docker-link:2375'
+    swarmMode: true
+    exposedByDefault: false
+    network: SWARM_NETWORK_NAME
+
+certificatesResolvers:
+  letsEncrypt:
+    acme:
+      email: EMAIL_ADDRESS
+      storage: /etc/traefik/acme/acme.json
+      httpChallenge:
+        # used during the challenge
+        entryPoint: web
+
+# enables secure dashboard
+api: {}
+
+# # enables access log
+# accessLog: {}
+# # increases log level
+# log:
+#   level: DEBUG
