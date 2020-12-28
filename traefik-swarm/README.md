@@ -35,6 +35,10 @@ SWARM_NAME=
 
 The admin user and password above let you access the traefik dashboard in production. You can generate the hash of your password using `openssl passwd -apr1 password_here`
 
+### HealthCheck
+
+Note that this example expects a `healthcheck` task to be available. You can define this however you like. It could be a simple ping of the host to see if it's up. It's better though if it really tests some core function of your app like the ability to talk to the database or sign in.
+
 ### Running
 
 If you have an image and you've tailored these example files to match your project and they are in a `Docker` top-level directory of your lucky app then you can spin the whole thing up like so (using your actual IP address in palce of `$IP_ADDRESS`):
@@ -48,4 +52,4 @@ The first step puts docker into swarm mode and the second deploys multiple swarm
 
 ## Futher Reading
 
-If you're into the above but looking for more details you might want to check out: https://github.com/KCErb/lucky-hasura-docker. That's a repo that goes into painstaking detail of doing things like the above but more and including an awesome GraphQL engine called "Hasura".
+If you're into the above but looking for more details, you might want to check out: https://github.com/KCErb/lucky-hasura-docker. That's a repo that goes into painstaking detail of doing things like the above but more and including an awesome GraphQL engine called "Hasura".

@@ -3,7 +3,7 @@ services:
   lucky:
     image: ${LUCKY_IMAGE}:${LUCKY_TAG}
     environment:
-      DB_URL:
+      DATABASE_URL:
       SECRET_KEY_BASE:
       SEND_GRID_KEY:
       APP_DOMAIN:
