@@ -27,3 +27,13 @@ docker-compose up
 ```
 
 and you'll be able to see the app on `localhost:5000`.
+
+## Tips
+
+* You can take advantage of docker's caching mechanism in CI/CD environments with these multi-stage builds only if you include the cache in the built image and use the 'cache from' flag to use the cache from a previously built image. This was a hard-to-find detail so I wanted to write it down. Imagine in the following that `$stage` is `node_build` or `app_build` and you happend to have `node_build:cache` on some docker repo somewhere. Then you could pull that down into the CI machine before running this:
+
+```
+ DOCKER_BUILDKIT=1 docker build --build-arg BUILDKIT_INLINE_CACHE=1 --file path/to/Dockerfile --cache-from="$stage:cache" --tag $stage --target $stage .
+```
+
+and docker will build just the one stage, use the old image for cache, and include the new cache in the new image. Now if you store that image in your docker repo with the `cache` tag you can pull it down for the next build. The result will be much more efficient builds.
